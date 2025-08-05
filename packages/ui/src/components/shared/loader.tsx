@@ -1,4 +1,4 @@
-import { Spinner } from "./spinner.js";
+import { Spinner } from "@workspace/ui/components/shared/spinner";
 
 interface LoaderProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";

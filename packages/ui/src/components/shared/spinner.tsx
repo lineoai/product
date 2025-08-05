@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@workspace/ui/lib/utils.js"
+import { cn } from "@workspace/ui/lib/utils"
 
 
 interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
