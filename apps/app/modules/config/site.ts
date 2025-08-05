@@ -25,6 +25,14 @@ export const siteConfig = {
         signUp: {
             title: "Sign Up | Lineo AI",
             description: "Create a new account for Lineo AI to get started with our AI-powered customer support solutions."
+        },
+        org:{
+            title: "Create Organization | Lineo AI",
+            description: "Select your organization to access Lineo AI's customer support features. If you don't have an organization, you can create one."
         }
+    },
+    dashboard:{
+        title: "Dashboard | Lineo AI",
+        description: "Your Lineo AI dashboard for managing customer support settings, viewing analytics, and configuring your AI chatbot."
     }
 }
