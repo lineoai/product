@@ -1,13 +1,12 @@
-import React from "react";
+import { AuthLayout } from "@/modules/auth/ui/components/layouts/auth-layout";
+import { siteConfig } from "@/modules/config/site";
+import { Metadata } from "next";
 
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="w-full min-h-screen h-full flex flex-col items-center justify-center">
-      {children}
-    </div>
-  );
+export const metadata : Metadata ={
+  title: siteConfig.auth.title,
+  description: siteConfig.auth.description,
+}
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return <AuthLayout>{children}</AuthLayout>;
 }
