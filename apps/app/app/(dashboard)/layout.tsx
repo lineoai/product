@@ -6,7 +6,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: siteConfig.dashboard.title,
   description: siteConfig.dashboard.description,
-}
+};
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
