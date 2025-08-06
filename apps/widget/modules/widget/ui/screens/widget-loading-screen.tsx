@@ -102,7 +102,7 @@ export const WidgetLoadingScreen = ({
       })
       .catch(() => {
         setSessionValid(false);
-        setStep("settings");
+        setStep("done");
       });
   }, [step, contactSessionId, validateContactSession, setLoadingMessage]);
 
