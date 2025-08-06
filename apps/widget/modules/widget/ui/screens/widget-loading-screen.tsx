@@ -13,7 +13,6 @@ import { Loader } from "@workspace/ui/components/shared/loader";
 import { useEffect, useState } from "react";
 import { useAction, useMutation } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
-import { Id } from "@workspace/backend/_generated/dataModel";
 
 type InitStep = "org" | "session" | "settings" | "vapi" | "done";
 
@@ -84,19 +83,22 @@ export const WidgetLoadingScreen = ({
       return;
     }
 
+    setLoadingMessage("Finding Contact Session ID");
+
     if (!contactSessionId) {
       setSessionValid(false);
       setStep("done");
       return;
     }
 
-    setLoadingMessage("Finding Contact Session ID");
+    setLoadingMessage("Validating Session");
 
     validateContactSession({
-      contactSessionId: contactSessionId as Id<"contactSessions">,
+      contactSessionId,
     })
       .then((result) => {
         setSessionValid(result.valid);
+        setStep("done");
       })
       .catch(() => {
         setSessionValid(false);
@@ -104,17 +106,15 @@ export const WidgetLoadingScreen = ({
       });
   }, [step, contactSessionId, validateContactSession, setLoadingMessage]);
 
-useEffect(() => {
-  if (step !== "done"){
-    return ;
-  }
+  useEffect(() => {
+    if (step !== "done") {
+      return;
+    }
 
-  const hasValidSession = sessionValid && contactSessionId;
+    const hasValidSession = sessionValid && contactSessionId;
 
-  setScreen(hasValidSession ? "selection" : "auth");
-
-  
-}, [step, sessionValid, contactSessionId, setScreen]);
+    setScreen(hasValidSession ? "selection" : "auth");
+  }, [step, sessionValid, contactSessionId, setScreen]);
 
   return (
     <>

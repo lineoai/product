@@ -20,6 +20,7 @@ import {
   contactSessionIdAtomFamily,
   organizationIdAtom,
 } from "../../atoms/widget-atoms";
+import { Loader } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -30,7 +31,7 @@ export const WidgetAuthScreen = () => {
   const organizationId = useAtomValue(organizationIdAtom);
   const setContactSessionId = useSetAtom(
     contactSessionIdAtomFamily(organizationId || "")
-  );
+  );  
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -53,7 +54,7 @@ export const WidgetAuthScreen = () => {
       languages: navigator.languages?.join(", "),
       platform: navigator.platform,
       vendor: navigator.vendor,
-      scrreenResolution: `${screen.width}x${screen.height}`,
+      screenResolution: `${screen.width}x${screen.height}`,
       viewportSize: `${window.innerWidth}x${window.innerHeight}`,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       timezoneOffset: new Date().getTimezoneOffset(),
@@ -67,6 +68,7 @@ export const WidgetAuthScreen = () => {
       organizationId,
       metadata,
     });
+
 
     setContactSessionId(contactSessionId);
   };
@@ -125,7 +127,10 @@ export const WidgetAuthScreen = () => {
             type="submit"
             size={"lg"}
           >
-            Continue
+            {form.formState.isSubmitting ? "Confirming" : "Continue"}
+          {form.formState.isSubmitting  && (
+            <Loader className="ml-1 size-4 shrink-0 animate-spin" />
+          )}
           </Button>
         </form>
       </Form>

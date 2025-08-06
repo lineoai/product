@@ -13,7 +13,7 @@ export default defineSchema({
             languages: v.optional(v.string()),
             platform: v.optional(v.string()),
             vendor: v.optional(v.string()),
-            scrreenResolution: v.optional(v.string()),
+            screenResolution: v.optional(v.string()),
             viewportSize: v.optional(v.string()),
             timezone: v.optional(v.string()),
             timezoneOffset: v.optional(v.number()),
