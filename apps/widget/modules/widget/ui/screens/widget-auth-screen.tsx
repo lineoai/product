@@ -19,6 +19,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import {
   contactSessionIdAtomFamily,
   organizationIdAtom,
+  screenAtom,
 } from "../../atoms/widget-atoms";
 import { Loader } from "lucide-react";
 
@@ -28,10 +29,12 @@ const formSchema = z.object({
 });
 
 export const WidgetAuthScreen = () => {
+  const setScreen = useSetAtom(screenAtom);
+
   const organizationId = useAtomValue(organizationIdAtom);
   const setContactSessionId = useSetAtom(
     contactSessionIdAtomFamily(organizationId || "")
-  );  
+  );
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -69,8 +72,8 @@ export const WidgetAuthScreen = () => {
       metadata,
     });
 
-
     setContactSessionId(contactSessionId);
+    setScreen("selection");
   };
 
   return (
@@ -128,9 +131,9 @@ export const WidgetAuthScreen = () => {
             size={"lg"}
           >
             {form.formState.isSubmitting ? "Confirming" : "Continue"}
-          {form.formState.isSubmitting  && (
-            <Loader className="ml-1 size-4 shrink-0 animate-spin" />
-          )}
+            {form.formState.isSubmitting && (
+              <Loader className="ml-1 size-4 shrink-0 animate-spin" />
+            )}
           </Button>
         </form>
       </Form>
