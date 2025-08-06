@@ -15,6 +15,7 @@ import { useMutation } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import { id } from "zod/v4/locales";
 import { useState } from "react";
+import WidgetFooter from "../components/widget-footer";
 
 export const WidgetSelectionScreen = () => {
   const setScreen = useSetAtom(screenAtom);
@@ -73,9 +74,7 @@ export const WidgetSelectionScreen = () => {
           <div className="flex items-center gap-x-2">
             <MessageSquareText className="size-4" />
             {isPendingConversation ? (
-              <span>
-                Starting Chat
-              </span>
+              <span>Starting Chat</span>
             ) : (
               <span>Start Chat</span>
             )}
@@ -87,6 +86,7 @@ export const WidgetSelectionScreen = () => {
           )}
         </Button>
       </div>
+      <WidgetFooter />
     </>
   );
 };
