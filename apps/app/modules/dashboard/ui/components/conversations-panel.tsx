@@ -45,7 +45,7 @@ const ConversationsPanel = () => {
       status: statuFilter === "all" ? undefined : statuFilter,
     },
     {
-      initialNumItems: 5,
+      initialNumItems: 10,
     }
   );
 
