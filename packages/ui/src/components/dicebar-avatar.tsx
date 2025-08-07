@@ -24,15 +24,11 @@ export const DicebearAvatar = ({
   badgeImageUrl,
 }: DicebearAvatarProps) => {
   const avatarSrc = useMemo(() => {
-    if (imageUrl) {
-      return imageUrl;
-    }
-
+    if (imageUrl) return imageUrl;
     const avatar = createAvatar(glass, {
       seed: seed.toLowerCase().trim(),
       size,
     });
-
     return avatar.toDataUri();
   }, [seed, size, imageUrl]);
 
@@ -41,35 +37,40 @@ export const DicebearAvatar = ({
   return (
     <div
       className="relative inline-block"
-      style={{ width: size, height: size }}
+      style={{
+        width: size,
+        height: size,
+        overflow: "visible", // Allows badge to overflow outside avatar
+      }}
     >
       <Avatar
         className={cn("border", className)}
         style={{ width: size, height: size }}
       >
         <AvatarImage alt={"Avatar"} src={avatarSrc} />
-        {badgeImageUrl && (
-          <div
-            className={cn(
-              "absolute right-0 bottom-0 flex items-center justify-center overflow-hidden rounded-full border-2 border-background bg-background",
-              badgeClassName
-            )}
-            style={{
-              width: badgeSize,
-              height: badgeSize,
-              transform: "translate(15%, 15%)",
-            }}
-          >
-            <img
-              alt="Badge"
-              className="h-full w-full object-cover"
-              height={badgeSize}
-              src={badgeImageUrl}
-              width={badgeSize}
-            />
-          </div>
-        )}
       </Avatar>
+      {badgeImageUrl && (
+        <div
+          className={cn(
+            "absolute z-10 flex items-center justify-center overflow-hidden rounded-full border-2 border-background bg-background",
+            badgeClassName
+          )}
+          style={{
+            width: badgeSize,
+            height: badgeSize,
+            right: -badgeSize * 0.2,
+            bottom: -badgeSize * 0.2,
+          }}
+        >
+          <img
+            alt="Badge"
+            className="h-full w-full object-cover"
+            height={badgeSize}
+            src={badgeImageUrl}
+            width={badgeSize}
+          />
+        </div>
+      )}
     </div>
   );
 };
