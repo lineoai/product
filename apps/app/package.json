@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.28.1",
+    "@hookform/resolvers": "^5.2.0",
     "@sentry/nextjs": "10",
     "@tabler/icons-react": "^3.34.1",
     "@workspace/backend": "workspace:*",

@@ -63,7 +63,7 @@ const ConversationsPanel = () => {
 
   return (
     <div className="flex h-full w-full bg-background flex-col text-sidebar-foreground">
-      <div className="flex flex-col gap-3.5 border-b p-2">
+      <div className="flex flex-col gap-3.5 border-b p-2.5">
         <Select
           defaultValue="all"
           onValueChange={(value) => {
@@ -133,9 +133,8 @@ const ConversationsPanel = () => {
                 >
                   <div
                     className={cn(
-                      "-translate-y-1/2 absolute top-1/2 left-0h-[64%] w-1 rounded-r-full bg-neutral-300 opacity-0 transition-opacity",
-                      pathname === `/conversations/${conversation._id}` &&
-                        "opacity-100"
+                      "absolute top-1/2 left-0 h-[64%] w-1 rounded-r-full bg-neutral-300 opacity-0 transition-opacity -translate-y-1/2",
+                      pathname === `/conversations/${conversation._id}` && "opacity-100"
                     )}
                   />
 
