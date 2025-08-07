@@ -34,6 +34,8 @@ import { Form, FormField } from "@workspace/ui/components/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { ConvertionStatusButton } from "../components/conversation-status-button";
+import { useState } from "react";
 
 interface ConversationIdViewProps {
   conversationId: Id<"conversations">;
@@ -44,6 +46,7 @@ const formSchema = z.object({
 });
 
 const ConversationIdView = ({ conversationId }: ConversationIdViewProps) => {
+  const [isUpdating, setIsUpdating] = useState(false);
   const conversation = useQuery(api.private.conversations.getOne, {
     conversationId,
   });
@@ -75,12 +78,50 @@ const ConversationIdView = ({ conversationId }: ConversationIdViewProps) => {
     }
   };
 
+  const updateConversationStatus = useMutation(
+    api.private.conversations.updateStatus
+  );
+
+  const handleToggleStatus = async () => {
+    if (!conversation) {
+      return;
+    }
+    setIsUpdating(true);
+    let newStatus: "resolved" | "escalated" | "unresolved";
+
+    if (conversation.status === "unresolved") {
+      newStatus = "escalated";
+    } else if (conversation.status === "escalated") {
+      newStatus = "resolved";
+    } else {
+      newStatus = "unresolved";
+    }
+
+    try {
+      await updateConversationStatus({
+        conversationId,
+        status: newStatus,
+      });
+    } catch (error) {
+      console.log("Error updating conversation status:", error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
     <div className="flex h-full flex-col bg-muted">
       <header className="flex items-center justify-between border-b bg-background p-2.5">
         <Button size={"sm"} variant={"ghost"}>
           <MoreHorizontal />
         </Button>
+        {conversation && (
+          <ConvertionStatusButton
+            onClick={handleToggleStatus}
+            status={conversation?.status}
+            disabled={isUpdating}
+          />
+        )}
       </header>
       <AIConversation className="max-h-[calc(100vh-180px)]">
         <AIConversationContent>
@@ -137,7 +178,12 @@ const ConversationIdView = ({ conversationId }: ConversationIdViewProps) => {
             />
             <AIInputToolbar>
               <AIInputTools>
-                <AIInputButton>
+                <AIInputButton
+                  disabled={
+                    conversation?.status === "resolved" ||
+                    form.formState.isSubmitting
+                  }
+                >
                   <Wand2Icon />
                   Enhance
                 </AIInputButton>
