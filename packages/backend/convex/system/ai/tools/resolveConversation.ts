@@ -23,9 +23,7 @@ export const resolveConversation = createTool({
                 role: "assistant",
                 content: "Conversation resolved."
             }
-        }
-
-        )
+        });
 
         return "Conversation resolved";
 

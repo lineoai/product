@@ -22,7 +22,7 @@ import { api } from "@workspace/backend/_generated/api";
 import { getCountryFlagUrl, getCountryFromTimezone } from "@/lib/country-utils";
 import Link from "next/link";
 import { cn } from "@workspace/ui/lib/utils";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { DicebearAvatar } from "@workspace/ui/components/dicebar-avatar";
 import { formatDistanceToNow } from "date-fns";
 import { ConversationStatusIcon } from "@workspace/ui/components/conversation-status-icon";
@@ -32,9 +32,13 @@ import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
 import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
 import { Loader } from "@workspace/ui/components/shared/loader";
 import { Skeleton } from "@workspace/ui/components/skeleton";
+import { useState, useTransition } from "react";
 
 const ConversationsPanel = () => {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [loadingConversationId, setLoadingConversationId] = useState<string | null>(null);
 
   const statuFilter = useAtomValue(statusFilterAtom);
   const setStatusFilter = useSetAtom(statusFilterAtom);
@@ -60,6 +64,19 @@ const ConversationsPanel = () => {
     loadMore: conversations.loadMore,
     loadSize: 10,
   });
+
+  const handleConversationClick = (conversationId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    setLoadingConversationId(conversationId);
+    
+    startTransition(() => {
+      router.push(`/conversations/${conversationId}`);
+      // Reset loading state after navigation
+      setTimeout(() => {
+        setLoadingConversationId(null);
+      }, 100);
+    });
+  };
 
   return (
     <div className="flex h-full w-full bg-background flex-col text-sidebar-foreground">
@@ -121,33 +138,50 @@ const ConversationsPanel = () => {
                 ? getCountryFlagUrl(country.code)
                 : undefined;
 
+              const isCurrentConversation = pathname === `/conversations/${conversation._id}`;
+              const isLoading = loadingConversationId === conversation._id;
+
               return (
-                <Link
-                  href={`/conversations/${conversation._id}`}
+                <div
                   key={conversation._id}
+                  onClick={(e) => handleConversationClick(conversation._id, e)}
                   className={cn(
-                    "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm hover:bg-accent hover:text-accent-foreground",
-                    pathname === `/conversations/${conversation._id}` &&
-                      "bg-accent text-accent-foreground"
+                    "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm hover:bg-accent hover:text-accent-foreground transition-all duration-200",
+                    isCurrentConversation && "bg-accent text-accent-foreground",
+                    isLoading && "bg-accent/60 pointer-events-none"
                   )}
                 >
                   <div
                     className={cn(
                       "absolute top-1/2 left-0 h-[64%] w-1 rounded-r-full bg-neutral-300 opacity-0 transition-opacity -translate-y-1/2",
-                      pathname === `/conversations/${conversation._id}` && "opacity-100"
+                      isCurrentConversation && "opacity-100"
                     )}
                   />
 
-                  <DicebearAvatar
-                    seed={
-                      conversation.contactSession._id ||
-                      conversation.contactSession.name
-                    }
-                    size={40}
-                    badgeImageUrl={countryFlagUrl}
-                    className="shrink-0"
-                  />
-                  <div className="flex-1">
+                  <div className="relative">
+                    <DicebearAvatar
+                      seed={
+                        conversation.contactSession._id ||
+                        conversation.contactSession.name
+                      }
+                      size={40}
+                      badgeImageUrl={countryFlagUrl}
+                      className={cn(
+                        "shrink-0 transition-opacity",
+                        isLoading && "opacity-50"
+                      )}
+                    />
+                    {isLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Loader className="size-4 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className={cn(
+                    "flex-1 transition-opacity",
+                    isLoading && "opacity-50"
+                  )}>
                     <div className="flex w-full items-center gap-2">
                       <span className="truncate font-semibold">
                         {conversation.contactSession.name}
@@ -171,10 +205,17 @@ const ConversationsPanel = () => {
                           {conversation.lastMessage?.text}
                         </span>
                       </div>
-                      <ConversationStatusIcon status={conversation.status} />
+                      <div className="flex items-center gap-2">
+                        {isLoading && (
+                          <span className="text-xs text-muted-foreground">
+                            Loading...
+                          </span>
+                        )}
+                        <ConversationStatusIcon status={conversation.status} />
+                      </div>
                     </div>
                   </div>
-                </Link>
+                </div>
               );
             })}
             <InfiniteScrollTrigger
