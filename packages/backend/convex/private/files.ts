@@ -6,7 +6,6 @@ import {
   guessMimeTypeFromExtension,
   vEntryId,
 } from "@convex-dev/rag";
-import { extractText } from "@convex-dev/agent";
 import { extractTextContext } from "../lib/extractTextContext";
 import rag from "../system/ai/rag";
 import { Id } from "../_generated/dataModel";
